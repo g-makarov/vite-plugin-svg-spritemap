@@ -1,0 +1,16 @@
+{
+	"compilerOptions": {
+		"moduleResolution": "node",
+		"target": "esnext",
+		"module": "esnext",
+		"declaration": true,
+		"strict": true,
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"noUncheckedIndexedAccess": true
+	},
+	"include": [
+		"src/index.ts"
+	],
+	"exclude": ["node_modules", "dist"],
+}

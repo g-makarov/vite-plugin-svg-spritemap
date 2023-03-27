@@ -1,1 +1,72 @@
 # vite-plugin-svg-spritemap
+
+This [vite](https://vitejs.dev/) plugin generates a single SVG spritemap containing multiple <symbol> elements from all `.svg` files in a directory.
+
+<a href="https://www.npmjs.com/package/vite-plugin-svg-spritemap">
+  <img alt="npm version" src="https://img.shields.io/npm/v/vite-plugin-svg-spritemap.svg?style=flat-square" />
+</a>
+<a href="https://www.npmjs.com/package/vite-plugin-svg-spritemap">
+  <img alt="npm downloads" src="https://img.shields.io/npm/dm/vite-plugin-svg-spritemap.svg?style=flat-square" />
+</a>
+<a href="https://bundlephobia.com/package/vite-plugin-svg-spritemap">
+  <img alt="npm minified bundle size" src="https://img.shields.io/bundlephobia/min/vite-plugin-svg-spritemap?style=flat-square">
+</a>
+<a href="https://bundlephobia.com/package/vite-plugin-svg-spritemap">
+  <img alt="npm gzip minified bundle size" src="https://img.shields.io/bundlephobia/minzip/vite-plugin-svg-spritemap?style=flat-square">
+</a>
+
+## Features
+
+- Easily generate the SVG spritemap as part of your build process
+- Works with dev server 🔥
+
+## Installation
+
+```bash
+# using npm
+npm install -D vite-plugin-svg-spritemap
+# using pnpm
+pnpm install -D vite-plugin-svg-spritemap
+# using yarn
+yarn add --dev vite-plugin-svg-spritemap
+```
+
+## Usage
+
+**Vite config**
+```ts
+import svgSpritemap from 'vite-plugin-svg-spritemap';
+
+export default defineConfig({
+  plugins: [
+    svgSpritemap({
+      pattern: 'src/icons/*.svg',
+    }),
+  ],
+});
+```
+
+**SVG element**
+```tsx
+export const Icon: React.FC<{ name: string }> = ({ name }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+    <use xlinkHref={`/spritemap.svg#sprite-${name}`} />
+  </svg>
+);
+
+const App = () => {
+  return (
+    <Icon name="arrow" />
+  );
+}
+```
+
+## Options
+| Option     | Type                | Description                                                                                                           |
+| ---------- | ------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `pattern`  | `string`            | A glob pattern that specifies which SVG files to include in the sprite.                                               |
+| `prefix`   | `string` (optional) | A string that is added to the beginning of each SVG icon's ID when it is added to the sprite.                         |
+| `filename` | `string` (optional) | The name of the output file that contains the SVG sprite. If not specified, the default name "spritemap.svg" is used. |
+
+## What's next?
+- [ ] Allow to pass [svgo](https://github.com/svg/svgo) options  
