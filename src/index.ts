@@ -1,13 +1,16 @@
+import fs from 'fs-extra';
 import path from 'path';
 import { Plugin, ResolvedConfig } from 'vite';
 import chokidar from 'chokidar';
-import fs from 'fs-extra';
 import { getSpriteContent } from './utils';
+import { Config as SVGOConfig } from 'svgo';
 
-interface SvgSpritemapOptions {
+export interface SvgSpritemapOptions {
   pattern: string;
   prefix?: string;
   filename?: string;
+  svgo?: SVGOConfig | boolean;
+  currentColor?: boolean;
 }
 
 const PLUGIN_NAME = 'vite-plugin-svg-spritemap';
@@ -16,6 +19,8 @@ export function svgSpritemap({
   pattern,
   prefix = 'sprite',
   filename = 'spritemap.svg',
+  svgo = true,
+  currentColor = true,
 }: SvgSpritemapOptions): Plugin[] {
   let config: ResolvedConfig;
   let watcher: chokidar.FSWatcher;
@@ -24,11 +29,11 @@ export function svgSpritemap({
     {
       name: `${PLUGIN_NAME}:build`,
       apply: 'build',
-      configResolved(_config) {
+      async configResolved(_config) {
         config = _config;
       },
       writeBundle() {
-        const sprite = getSpriteContent(pattern, prefix);
+        const sprite = getSpriteContent({ pattern, prefix, svgo, currentColor });
         const filePath = path.resolve(config.root, config.build.outDir, filename);
         fs.ensureFileSync(filePath);
         fs.writeFileSync(filePath, sprite);
@@ -37,7 +42,7 @@ export function svgSpritemap({
     {
       name: `${PLUGIN_NAME}:serve`,
       apply: 'serve',
-      configResolved(_config) {
+      async configResolved(_config) {
         config = _config;
       },
       configureServer(server) {
@@ -59,7 +64,7 @@ export function svgSpritemap({
             if (req.url !== `/${filename}`) {
               return next();
             }
-            const sprite = getSpriteContent(pattern, prefix);
+            const sprite = getSpriteContent({ pattern, prefix, svgo, currentColor });
             res.writeHead(200, {
               'Content-Type': 'image/svg+xml, charset=utf-8',
               'Cache-Control': 'no-cache',
