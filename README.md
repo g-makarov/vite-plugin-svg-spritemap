@@ -64,7 +64,3 @@ const App = () => {
 | `filename`     | `string` (optional)                  | The name of the output file that contains the SVG sprite. Default is `spritemap.svg`.                              |
 | `currentColor` | `boolean` (optional)                 | Replace colors in the SVGs with the `currentColor` value by SVGO. Default is `true`.                               |
 | `svgo`         | `SVGOConfig` or `boolean` (optional) | Use SVGO for optimization. Default is `true`.                                                                      |
-
-## What's next?
-
-- [ ] Allow to pass [svgo](https://github.com/svg/svgo) options
