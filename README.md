@@ -8,12 +8,6 @@ This [vite](https://vitejs.dev/) plugin generates a single SVG spritemap contain
 <a href="https://www.npmjs.com/package/vite-plugin-svg-spritemap">
   <img alt="npm downloads" src="https://img.shields.io/npm/dm/vite-plugin-svg-spritemap.svg?style=flat-square" />
 </a>
-<a href="https://bundlephobia.com/package/vite-plugin-svg-spritemap">
-  <img alt="npm minified bundle size" src="https://img.shields.io/bundlephobia/min/vite-plugin-svg-spritemap?style=flat-square">
-</a>
-<a href="https://bundlephobia.com/package/vite-plugin-svg-spritemap">
-  <img alt="npm gzip minified bundle size" src="https://img.shields.io/bundlephobia/minzip/vite-plugin-svg-spritemap?style=flat-square">
-</a>
 
 ## Features
 
