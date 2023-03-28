@@ -1,7 +1,7 @@
-import fs from 'fs';
 import path from 'path';
 import { Plugin, ResolvedConfig } from 'vite';
 import chokidar from 'chokidar';
+import fs from 'fs-extra';
 import { getSpriteContent } from './utils';
 
 interface SvgSpritemapOptions {
@@ -29,7 +29,9 @@ export function svgSpritemap({
       },
       writeBundle() {
         const sprite = getSpriteContent(pattern, prefix);
-        fs.writeFileSync(path.resolve(config.root, config.build.outDir, filename), sprite);
+        const filePath = path.resolve(config.root, config.build.outDir, filename);
+        fs.ensureFileSync(filePath);
+        fs.writeFileSync(filePath, sprite);
       },
     },
     {
