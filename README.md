@@ -46,7 +46,7 @@ export default defineConfig({
 ```tsx
 export const Icon: React.FC<{ name: string }> = ({ name }) => (
   <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
-    <use xlinkHref={`/spritemap.svg#sprite-${name}`} />
+    <use xlinkHref={`/spritemap.svg#${name}`} />
   </svg>
 );
 
@@ -57,10 +57,10 @@ const App = () => {
 
 ## Options
 
-| Option         | Type                                 | Description                                                                                                        |
-| -------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
-| `pattern`      | `string`                             | A glob pattern that specifies which SVG files to include in the sprite.                                            |
-| `prefix`       | `string` (optional)                  | A string that is added to the beginning of each SVG icon's ID when it is added to the sprite. Default is `sprite`. |
-| `filename`     | `string` (optional)                  | The name of the output file that contains the SVG sprite. Default is `spritemap.svg`.                              |
-| `currentColor` | `boolean` (optional)                 | Replace colors in the SVGs with the `currentColor` value by SVGO. Default is `true`.                               |
-| `svgo`         | `SVGOConfig` or `boolean` (optional) | Use SVGO for optimization. Default is `true`.                                                                      |
+| Option         | Type                                 | Description                                                                                   |
+| -------------- | ------------------------------------ | --------------------------------------------------------------------------------------------- |
+| `pattern`      | `string`                             | A glob pattern that specifies which SVG files to include in the sprite.                       |
+| `prefix`       | `string` (optional)                  | A string that is added to the beginning of each SVG icon's ID when it is added to the sprite. |
+| `filename`     | `string` (optional)                  | The name of the output file that contains the SVG sprite. Default is `spritemap.svg`.         |
+| `currentColor` | `boolean` (optional)                 | Replace colors in the SVGs with the `currentColor` value by SVGO. Default is `true`.          |
+| `svgo`         | `SVGOConfig` or `boolean` (optional) | Use SVGO for optimization. Default is `true`.                                                 |
