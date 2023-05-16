@@ -17,7 +17,7 @@ const PLUGIN_NAME = 'vite-plugin-svg-spritemap';
 
 export function svgSpritemap({
   pattern,
-  prefix = 'sprite',
+  prefix,
   filename = 'spritemap.svg',
   svgo = true,
   currentColor = true,

@@ -41,7 +41,7 @@ export function getSpriteContent({
     let code = fs.readFileSync(file, 'utf-8');
     const result = svgo ? optimize(code, svgoConfig).data : code;
     const name = path.basename(file, '.svg');
-    const symbolId = `${prefix}-${name}`;
+    const symbolId = prefix ? `${prefix}-${name}` : name;
 
     const svgElement = parse(result).querySelector('svg') as HTMLElement;
     const symbol = parse('<symbol/>').querySelector('symbol') as HTMLElement;
