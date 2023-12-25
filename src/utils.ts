@@ -18,6 +18,7 @@ export function getSpriteContent({
 }: GetSpriteContentOptions): string {
   const svgFiles = fg.sync(pattern);
   const symbols: string[] = [];
+  const definitions: string[] = [];
 
   let svgoConfig: SVGOConfig = {};
 
@@ -46,6 +47,13 @@ export function getSpriteContent({
     const svgElement = parse(result).querySelector('svg') as HTMLElement;
     const symbol = parse('<symbol/>').querySelector('symbol') as HTMLElement;
 
+    const defs = svgElement.querySelector('defs');
+
+    if (defs) {
+      defs.childNodes.forEach(def => definitions.push(def.toString()));
+      svgElement.removeChild(defs);
+    }
+
     symbol.setAttribute('id', symbolId);
 
     if (svgElement.attributes.viewBox) {
@@ -57,5 +65,7 @@ export function getSpriteContent({
     symbols.push(symbol.toString());
   });
 
-  return `<svg xmlns="http://www.w3.org/2000/svg">${symbols.join('')}</svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg">${
+    definitions.length > 0 ? `<defs>${definitions.join('')}</defs>` : ''
+  }${symbols.join('')}</svg>`;
 }
