@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-svg-spritemap",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Generates a SVG spritemap from multiple .svg files",
   "author": "German Makarov <cxdcjs@gmail.com>",
   "private": false,
