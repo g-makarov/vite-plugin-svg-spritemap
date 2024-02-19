@@ -12,6 +12,7 @@ This [vite](https://vitejs.dev/) plugin generates a single SVG spritemap contain
 ## Features
 
 - Easily generate the SVG spritemap as part of your build process
+- Supports `<defs>`, so you can use gradients, patterns, and masks
 - Works with dev server 🔥
 
 If you find this plugin useful, why not
