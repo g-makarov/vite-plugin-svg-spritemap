@@ -61,7 +61,7 @@ export function svgSpritemap({
 
         return () => {
           server.middlewares.use(async (req, res, next) => {
-            if (req.url !== `/${filename}`) {
+            if (req.originalUrl !== `/${filename}`) {
               return next();
             }
             const sprite = getSpriteContent({ pattern, prefix, svgo, currentColor });

@@ -35,7 +35,7 @@ yarn add --dev vite-plugin-svg-spritemap
 **Vite config**
 
 ```ts
-import svgSpritemap from 'vite-plugin-svg-spritemap';
+import { svgSpritemap } from 'vite-plugin-svg-spritemap';
 
 export default defineConfig({
   plugins: [
