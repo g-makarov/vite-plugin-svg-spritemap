@@ -60,8 +60,9 @@ export function svgSpritemap({
           .on('unlink', reloadPage);
 
         return () => {
+          const spritemapUrl = server.config.base ? `${server.config.base.replace(/\/$/, '')}/${filename}` : `/${filename}`;
           server.middlewares.use(async (req, res, next) => {
-            if (req.originalUrl !== `/${filename}`) {
+            if (req.originalUrl !== spritemapUrl) {
               return next();
             }
             const sprite = getSpriteContent({ pattern, prefix, svgo, currentColor });
