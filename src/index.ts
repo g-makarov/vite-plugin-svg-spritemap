@@ -47,7 +47,7 @@ export function svgSpritemap({
       },
       configureServer(server) {
         function reloadPage() {
-          server.ws.send({ type: 'full-reload', path: '*' });
+          server.hot.send({ type: 'full-reload', path: '*' });
         }
 
         watcher = chokidar
