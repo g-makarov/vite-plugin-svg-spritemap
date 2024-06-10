@@ -48,6 +48,14 @@ export default defineConfig({
 
 **SVG element**
 
+```html
+<svg>
+  <use xlink:href="/spritemap.svg#example"></use>
+</svg>
+```
+
+**React component example**
+
 ```tsx
 export const Icon: React.FC<{ name: string }> = ({ name }) => (
   <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
