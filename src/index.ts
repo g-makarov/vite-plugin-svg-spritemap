@@ -11,6 +11,7 @@ export interface SvgSpritemapOptions {
   filename?: string;
   svgo?: SVGOConfig | boolean;
   currentColor?: boolean;
+  emit?: boolean;
 }
 
 const PLUGIN_NAME = 'vite-plugin-svg-spritemap';
@@ -21,6 +22,7 @@ export function svgSpritemap({
   filename = 'spritemap.svg',
   svgo = true,
   currentColor = false,
+  emit = false,
 }: SvgSpritemapOptions): Plugin[] {
   let config: ResolvedConfig;
   let watcher: FSWatcher;
@@ -37,6 +39,14 @@ export function svgSpritemap({
         const filePath = path.resolve(config.root, config.build.outDir, filename);
         fs.ensureFileSync(filePath);
         fs.writeFileSync(filePath, sprite);
+
+        if (emit) {
+          this.emitFile({
+            type: 'asset',
+            fileName: filename,
+            source: sprite,
+          });
+        }
       },
     },
     {
