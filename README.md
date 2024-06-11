@@ -75,5 +75,5 @@ const App = () => {
 | `pattern`      | `string`                             | A glob pattern that specifies which SVG files to include in the sprite.                       |
 | `prefix`       | `string` (optional)                  | A string that is added to the beginning of each SVG icon's ID when it is added to the sprite. |
 | `filename`     | `string` (optional)                  | The name of the output file that contains the SVG sprite. Default is `spritemap.svg`.         |
-| `currentColor` | `boolean` (optional)                 | Replace colors in the SVGs with the `currentColor` value by SVGO. Default is `true`.          |
+| `currentColor` | `boolean` (optional)                 | Replace colors in the SVGs with the `currentColor` value by SVGO. Default is `false`.          |
 | `svgo`         | `SVGOConfig` or `boolean` (optional) | Use SVGO for optimization. Default is `true`.                                                 |

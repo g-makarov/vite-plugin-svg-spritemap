@@ -20,7 +20,7 @@ export function svgSpritemap({
   prefix,
   filename = 'spritemap.svg',
   svgo = true,
-  currentColor = true,
+  currentColor = false,
 }: SvgSpritemapOptions): Plugin[] {
   let config: ResolvedConfig;
   let watcher: chokidar.FSWatcher;
