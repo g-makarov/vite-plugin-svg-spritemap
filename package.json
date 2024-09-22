@@ -40,17 +40,17 @@
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
     "microbundle": "^0.15.1",
-    "prettier": "^3.2.5",
-    "typescript": "^5.4.3",
-    "vite": "^5.2.7",
-    "vitest": "^1.4.0"
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.2",
+    "vite": "^5.4.7",
+    "vitest": "^2.1.1"
   },
   "dependencies": {
-    "chokidar": "^3.6.0",
+    "chokidar": "^4.0.0",
     "fast-glob": "^3.3.2",
     "fs-extra": "^11.2.0",
     "node-html-parser": "^6.1.13",
-    "svgo": "^3.2.0"
+    "svgo": "^3.3.2"
   },
   "peerDependencies": {
     "vite": "^2 || ^3 || ^4 || ^5"
