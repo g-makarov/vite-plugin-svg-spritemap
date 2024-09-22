@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import { Plugin, ResolvedConfig } from 'vite';
-import chokidar from 'chokidar';
+import chokidar, { FSWatcher } from 'chokidar';
 import { getSpriteContent } from './getSpriteContent';
 import { Config as SVGOConfig } from 'svgo';
 
@@ -23,7 +23,7 @@ export function svgSpritemap({
   currentColor = false,
 }: SvgSpritemapOptions): Plugin[] {
   let config: ResolvedConfig;
-  let watcher: chokidar.FSWatcher;
+  let watcher: FSWatcher;
 
   return [
     {
@@ -47,7 +47,7 @@ export function svgSpritemap({
       },
       configureServer(server) {
         function reloadPage() {
-          server.hot.send({ type: 'full-reload', path: '*' });
+          server.ws.send({ type: 'full-reload', path: '*' });
         }
 
         watcher = chokidar
