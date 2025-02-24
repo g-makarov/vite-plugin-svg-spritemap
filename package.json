@@ -3,7 +3,7 @@
   "version": "1.0.4",
   "description": "Generates a SVG spritemap from multiple .svg files",
   "author": "Herman Makarov <hermanmakarov.com>",
-  "private": true,
+  "private": false,
   "license": "MIT",
   "homepage": "https://github.com/g-makarov/vite-plugin-svg-spritemap",
   "repository": {
