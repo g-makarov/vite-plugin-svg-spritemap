@@ -21,9 +21,8 @@
     "tsconfig.json"
   ],
   "scripts": {
-    "build": "smartbundle",
+    "build": "vitest --run && smartbundle",
     "prettier": "prettier --write src/**/*",
-    "prepublishOnly": "vitest --run && npm run build",
     "postversion": "git push && git push --tags",
     "test": "vitest --run",
     "test:watch": "vitest"
