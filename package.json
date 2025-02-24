@@ -2,8 +2,8 @@
   "name": "vite-plugin-svg-spritemap",
   "version": "1.0.1",
   "description": "Generates a SVG spritemap from multiple .svg files",
-  "author": "German Makarov <cxdcjs@gmail.com>",
-  "private": false,
+  "author": "Herman Makarov <hermanmakarov.com>",
+  "private": true,
   "license": "MIT",
   "homepage": "https://github.com/g-makarov/vite-plugin-svg-spritemap",
   "repository": {
@@ -14,23 +14,14 @@
     "url": "https://github.com/g-makarov/vite-plugin-svg-spritemap/issues"
   },
   "type": "module",
-  "source": "src/index.ts",
-  "exports": {
-    "require": "./dist/index.cjs",
-    "default": "./dist/index.esm.js",
-    "types": "./dist/index.d.ts"
-  },
-  "types": "./dist/index.d.ts",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.esm.js",
-  "unpkg": "./dist/index.umd.js",
+  "exports": "./src/index.ts",
   "files": [
     "dist",
     "src",
     "tsconfig.json"
   ],
   "scripts": {
-    "build": "microbundle",
+    "build": "smartbundle",
     "prettier": "prettier --write src/**/*",
     "prepublishOnly": "vitest --run && npm run build",
     "postversion": "git push && git push --tags",
@@ -39,21 +30,21 @@
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
-    "microbundle": "^0.15.1",
-    "prettier": "^3.3.3",
-    "typescript": "^5.6.2",
-    "vite": "^5.4.7",
-    "vitest": "^2.1.1"
+    "prettier": "^3.5.2",
+    "smartbundle": "^0.14.1",
+    "typescript": "^5.7.3",
+    "vite": "^6.1.1",
+    "vitest": "^3.0.6"
   },
   "dependencies": {
-    "chokidar": "^4.0.0",
-    "fast-glob": "^3.3.2",
-    "fs-extra": "^11.2.0",
-    "node-html-parser": "^6.1.13",
+    "chokidar": "^4.0.3",
+    "fast-glob": "^3.3.3",
+    "fs-extra": "^11.3.0",
+    "node-html-parser": "^7.0.1",
     "svgo": "^3.3.2"
   },
   "peerDependencies": {
-    "vite": "^2 || ^3 || ^4 || ^5"
+    "vite": "^2 || ^3 || ^4 || ^5 || ^6"
   },
   "keywords": [
     "vite-plugin",
@@ -71,5 +62,6 @@
     "icon",
     "icons",
     "typescript"
-  ]
+  ],
+  "packageManager": "pnpm@9.15.3"
 }
