@@ -1,9 +1,10 @@
 import fs from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 import type { Plugin, ResolvedConfig } from 'vite';
 import chokidar, { FSWatcher } from 'chokidar';
-import { getSpriteContent } from './getSpriteContent';
 import type { Config as SVGOConfig } from 'svgo';
+
+import { getSpriteContent } from './getSpriteContent';
 
 export interface SvgSpritemapOptions {
   pattern: string;
