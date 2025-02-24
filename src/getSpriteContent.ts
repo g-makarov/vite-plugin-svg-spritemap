@@ -1,6 +1,7 @@
 import fg from 'fast-glob';
 import fs from 'fs';
-import type { Config as SVGOConfig, optimize } from 'svgo';
+import { optimize } from 'svgo';
+import type { Config as SVGOConfig } from 'svgo';
 import path from 'path';
 import { HTMLElement, parse } from 'node-html-parser';
 import type { SvgSpritemapOptions } from './index';
