@@ -17,7 +17,7 @@ export interface SvgSpritemapOptions {
 
 const PLUGIN_NAME = 'vite-plugin-svg-spritemap';
 
-export function svgSpritemap({
+export default function svgSpritemap({
   pattern,
   prefix,
   filename = 'spritemap.svg',
