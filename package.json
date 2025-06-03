@@ -25,7 +25,8 @@
     "postversion": "git push && git push --tags",
     "test": "vitest --run",
     "test:watch": "vitest",
-    "tsc": "tsc --noEmit"
+    "tsc": "tsc --noEmit",
+    "publish": "cd dist && npm publish"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
