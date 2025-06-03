@@ -24,10 +24,12 @@
     "prettier": "prettier --write src/**/*",
     "postversion": "git push && git push --tags",
     "test": "vitest --run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "tsc": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
+    "@types/node": "^22.15.29",
     "prettier": "^3.5.2",
     "smartbundle": "^0.14.1",
     "typescript": "^5.7.3",
