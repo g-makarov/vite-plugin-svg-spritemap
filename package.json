@@ -26,7 +26,7 @@
     "test": "vitest --run",
     "test:watch": "vitest",
     "tsc": "tsc --noEmit",
-    "publish": "cd dist && npm publish"
+    "publish": "npm version patch && npm run build && cd dist && npm publish"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
