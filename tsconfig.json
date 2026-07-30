@@ -1,18 +1,19 @@
 {
-	"compilerOptions": {
-		"moduleResolution": "bundler",
-		"target": "esnext",
-		"module": "esnext",
-		"declaration": true,
-		"strict": true,
-		"allowSyntheticDefaultImports": true,
-		"esModuleInterop": true,
-		"noUncheckedIndexedAccess": true,
-		"verbatimModuleSyntax": true,
-		"skipLibCheck": true
-	},
-	"include": [
-		"src/index.ts"
-	],
-	"exclude": ["node_modules", "dist"]
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "target": "esnext",
+    "module": "preserve",
+    "lib": ["esnext"],
+    "types": ["node"],
+    "declaration": true,
+    "noEmit": true,
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "noUncheckedIndexedAccess": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true
+  },
+  "include": ["src", "tsdown.config.ts"],
+  "exclude": ["node_modules", "dist"]
 }

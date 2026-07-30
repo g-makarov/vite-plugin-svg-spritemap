@@ -1,51 +1,72 @@
 {
   "name": "vite-plugin-svg-spritemap",
-  "version": "1.0.13",
+  "version": "2.0.0",
   "description": "Generates a SVG spritemap from multiple .svg files",
   "author": "Herman Makarov <hermanmakarov.com>",
-  "private": true,
   "license": "MIT",
   "homepage": "https://github.com/g-makarov/vite-plugin-svg-spritemap",
   "repository": {
     "type": "git",
-    "url": "https://github.com/g-makarov/vite-plugin-svg-spritemap"
+    "url": "git+https://github.com/g-makarov/vite-plugin-svg-spritemap.git"
   },
   "bugs": {
     "url": "https://github.com/g-makarov/vite-plugin-svg-spritemap/issues"
   },
   "type": "module",
-  "exports": "./src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "files": [
     "dist",
-    "tsconfig.json"
+    "CHANGELOG.md"
   ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "packageManager": "pnpm@11.6.0",
   "scripts": {
-    "build": "vitest --run && smartbundle",
-    "prettier": "prettier --write src/**/*",
+    "build": "tsdown",
+    "lint": "oxlint src scripts",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "postversion": "git push && git push --tags",
     "test": "vitest --run",
     "test:watch": "vitest",
     "tsc": "tsc --noEmit",
-    "publish": "npm version patch && npm run build && cd dist && npm publish"
+    "check:exports": "publint && attw --pack . --profile esm-only",
+    "smoke": "node scripts/smoke.mjs",
+    "prepublishOnly": "pnpm run lint && pnpm run format:check && pnpm run tsc && pnpm run test && pnpm run build && pnpm run check:exports && pnpm run smoke && pnpm run compat",
+    "release": "npm version",
+    "compat": "node scripts/compat.mjs"
   },
   "devDependencies": {
-    "@types/fs-extra": "^11.0.4",
-    "@types/node": "^22.15.29",
-    "prettier": "^3.5.3",
-    "smartbundle": "^0.14.1",
-    "typescript": "^5.8.3",
-    "vite": "^6.3.5",
-    "vitest": "^3.2.0"
+    "@arethetypeswrong/cli": "^0.18.5",
+    "@types/node": "^26.1.2",
+    "@types/picomatch": "^4.0.3",
+    "oxfmt": "^0.61.0",
+    "oxlint": "^1.76.0",
+    "publint": "^0.3.22",
+    "tsdown": "^0.22.14",
+    "typescript": "^7.0.2",
+    "vite": "^8.1.5",
+    "vitest": "^4.1.10"
   },
   "dependencies": {
-    "chokidar": "^4.0.3",
-    "fast-glob": "^3.3.3",
-    "fs-extra": "^11.3.0",
-    "node-html-parser": "^7.0.1",
-    "svgo": "^3.3.2"
+    "chokidar": "^5.0.0",
+    "node-html-parser": "^9.0.1",
+    "picomatch": "^4.0.5",
+    "svgo": "^4.0.2",
+    "tinyglobby": "^0.2.17"
   },
   "peerDependencies": {
-    "vite": "^2 || ^3 || ^4 || ^5 || ^6 || ^7"
+    "vite": "^5 || ^6 || ^7 || ^8"
   },
   "keywords": [
     "vite-plugin",
