@@ -62,16 +62,25 @@ jobs:
 
       - uses: pnpm/action-setup@v4
 
+      # pnpm itself needs a newer Node than the oldest version we support, so
+      # install on a current one and switch the runtime afterwards.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile --prod --ignore-scripts
+
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-
-      - run: pnpm install --frozen-lockfile --prod --ignore-scripts
 
       - uses: actions/download-artifact@v4
         with:
           name: dist
           path: dist
+
+      - run: node --version
 
       - run: node scripts/smoke.mjs
 
