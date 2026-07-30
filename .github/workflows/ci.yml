@@ -1,0 +1,106 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # The toolchain (tsdown, oxlint, vitest) needs a recent Node.
+        # The published package is verified separately in `compat`.
+        node-version: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm run lint
+
+      - run: pnpm run format:check
+
+      - run: pnpm run tsc
+
+      - run: pnpm run test
+
+      - run: pnpm run build
+
+      - run: pnpm run check:exports
+
+      - uses: actions/upload-artifact@v4
+        if: matrix.node-version == 24
+        with:
+          name: dist
+          path: dist
+
+  compat:
+    # Verifies the build actually runs on every Node version `engines.node` claims,
+    # with production dependencies only — the way a consumer installs it.
+    needs: check
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ['20.19', 22, 24]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - run: pnpm install --frozen-lockfile --prod --ignore-scripts
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - run: node scripts/smoke.mjs
+
+  vite-compat:
+    # `peerDependencies` claims Vite 5 through 8, so exercise the plugin against
+    # each of them. vitest itself needs Vite 6+, hence the plain script.
+    needs: check
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        vite: [5, 6, 7, 8]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - run: pnpm add -D vite@${{ matrix.vite }}
+
+      - run: node scripts/compat.mjs
