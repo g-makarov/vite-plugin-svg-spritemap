@@ -1,0 +1,165 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+# Every job is read-only. Only `publish` gets `id-token: write`, and it is the
+# only job that installs nothing — anything running next to an OIDC token can
+# publish the package.
+permissions:
+  contents: read # Read-only by default; `publish` adds the one write it needs.
+
+# Never cancel a release in flight: a half-run publish is worse than a slow one.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: Lint, typecheck and test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+
+      - name: Install Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 26
+          package-manager-cache: false # Slower, but no cache poisoning risk
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Check formatting
+        run: pnpm run format:check
+
+      - name: Typecheck
+        run: pnpm run tsc
+
+      - name: Run tests
+        run: pnpm run test
+
+  build: # Separate job so build-time dependencies can't publish
+    name: Build the package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+
+      - name: Install Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 26
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Build package
+        run: pnpm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: build-artifacts
+          path: dist/
+          retention-days: 1
+
+  verify:
+    name: Verify the built package
+    # The rest of what `prepublishOnly` used to run — it can't run at publish
+    # time any more, because the publish job passes `--ignore-scripts`.
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+
+      - name: Install Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 26
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: build-artifacts
+          path: dist/
+
+      - name: Check published exports
+        run: pnpm run check:exports
+
+      - name: Smoke test the build
+        run: pnpm run smoke
+
+      - name: Check Vite compatibility
+        run: pnpm run compat
+
+  publish: # The critical job: no dependencies installed at all
+    name: Stage the npm release
+    needs:
+      - test
+      - build
+      - verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # Checkout only.
+      id-token: write # npm trusted publishing (OIDC) — mints the provenance
+      # attestation and authenticates the publish. No NPM_TOKEN exists: npm
+      # trusts this workflow file in this repository instead.
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: build-artifacts
+          path: dist/
+
+      - name: Install Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 26
+          package-manager-cache: false
+
+      - name: Show toolchain versions
+        run: node --version && npm --version
+
+      # `npm`, not `pnpm`: the OIDC exchange lives in the npm CLI, and nothing
+      # here needs a pnpm-only feature. `stage publish` only stages the release —
+      # a human then approves it on npmjs.com with 2FA, which hacked CI can't do.
+      - name: Stage npm release
+        run: npm stage publish --ignore-scripts

@@ -2,3 +2,6 @@
 # Without an explicit decision pnpm exits non-zero, which breaks the CI matrix.
 allowBuilds:
   esbuild: true
+# Refuse dependency versions published less than 3 days ago. Most malicious
+# releases are taken down within hours, so the delay filters them out.
+minimumReleaseAge: 4320
