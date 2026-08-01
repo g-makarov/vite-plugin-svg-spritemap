@@ -81,6 +81,16 @@ function svgSpritemap({
 
   let bundled: (Sprite & { fileName: string }) | undefined;
 
+  /**
+   * An SSR pass runs over the same sources as the client build, which already
+   * produced the sprite. Astro is the exception: every one of its passes is an
+   * SSR pass, and it turns on `ssrEmitAssets` precisely because those passes own
+   * the assets of the final output.
+   */
+  function skipPass(): boolean {
+    return Boolean(config.build.ssr) && !config.build.ssrEmitAssets;
+  }
+
   return [
     {
       name: `${PLUGIN_NAME}:build`,
@@ -91,16 +101,14 @@ function svgSpritemap({
       // The generated module is imported by application code, so it has to
       // exist before the bundler starts resolving imports.
       buildStart() {
-        // An SSR pass runs over the same sources; the client build already
-        // produced the sprite and the generated module.
-        if (config.build.ssr) {
+        if (skipPass()) {
           return;
         }
 
         bundled = build(true);
       },
       generateBundle() {
-        if (config.build.ssr) {
+        if (skipPass()) {
           return;
         }
 
@@ -192,22 +200,23 @@ function svgSpritemap({
           .on('change', onWatchEvent)
           .on('unlink', onWatchEvent);
 
-        return () => {
-          server.middlewares.use(async (req, res, next) => {
-            // The HMR client appends a cache-busting query, so match on the path only.
-            const requestPath = req.originalUrl?.split('?')[0];
+        // Registered here rather than from a returned post hook: frameworks that
+        // embed Vite (Astro, Nuxt) mount a catch-all request handler of their own,
+        // and a post hook would land behind it and never see the request.
+        server.middlewares.use((req, res, next) => {
+          // The HMR client appends a cache-busting query, so match on the path only.
+          const requestPath = (req.originalUrl ?? req.url)?.split('?')[0];
 
-            if (!requestPath?.endsWith('/' + devFileName)) {
-              return next();
-            }
+          if (!requestPath?.endsWith('/' + devFileName)) {
+            return next();
+          }
 
-            res.writeHead(200, {
-              'Content-Type': 'image/svg+xml, charset=utf-8',
-              'Cache-Control': 'no-cache',
-            });
-            res.end(getSprite().content);
+          res.writeHead(200, {
+            'Content-Type': 'image/svg+xml, charset=utf-8',
+            'Cache-Control': 'no-cache',
           });
-        };
+          res.end(getSprite().content);
+        });
       },
       async closeBundle() {
         await watcher?.close();

@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.0.1
+
+### Fixed
+
+- The sprite 404'd in dev under frameworks that wrap Vite with a request handler of
+  their own, Astro among them. The middleware was registered from a post hook, which
+  put it behind that handler; it now runs ahead of it.
+- An Astro production build emitted no sprite at all. Astro runs every build pass as an
+  SSR pass, and the plugin skips those; it now only skips the ones that do not own the
+  output assets (`build.ssrEmitAssets`).
+
 ## 2.0.0
 
 A rewrite of the plugin internals around three long-standing defects: the dev server

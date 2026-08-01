@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, test } from 'vitest';
-import { build, createServer, type HotPayload, type ViteDevServer } from 'vite';
+import { build, createServer, type HotPayload, type Plugin, type ViteDevServer } from 'vite';
 import { svgSpritemap, type SvgSpritemapOptions } from './index';
 import { HMR_EVENT } from './hmrClient';
 
@@ -59,13 +59,17 @@ async function buildProject(root: string, options: Partial<SvgSpritemapOptions> 
   return output as { fileName: string; type: string; source?: string }[];
 }
 
-async function startServer(root: string, options: Partial<SvgSpritemapOptions> = {}) {
+async function startServer(
+  root: string,
+  options: Partial<SvgSpritemapOptions> = {},
+  extraPlugins: Plugin[] = [],
+) {
   const server = await createServer({
     root,
     logLevel: 'silent',
     configFile: false,
     server: { port: 0 },
-    plugins: [svgSpritemap({ pattern: 'icons/**/*.svg', ...options })],
+    plugins: [svgSpritemap({ pattern: 'icons/**/*.svg', ...options }), ...extraPlugins],
   });
 
   servers.push(server);
@@ -143,6 +147,30 @@ describe('build', () => {
     expect(output.filter(file => file.fileName.endsWith('.svg'))).toHaveLength(0);
   });
 
+  // Astro runs every pass, including the one that owns the final assets, as an
+  // SSR pass and turns on `ssrEmitAssets` for it.
+  test('should emit on an SSR pass that owns the assets', async () => {
+    const root = createProject();
+
+    const result = await build({
+      root,
+      logLevel: 'silent',
+      configFile: false,
+      build: {
+        write: false,
+        ssr: path.join(root, 'src', 'main.js'),
+        ssrEmitAssets: true,
+      },
+      plugins: [svgSpritemap({ pattern: 'icons/**/*.svg' })],
+    });
+
+    const output = (Array.isArray(result) ? result[0]!.output : (result as never)['output']) as {
+      fileName: string;
+    }[];
+
+    expect(output.filter(file => file.fileName === 'spritemap.svg')).toHaveLength(1);
+  });
+
   test('should write the generated module before bundling', async () => {
     const root = createProject({ 'arrow.svg': RED, 'nested/close.svg': BLUE });
 
@@ -173,6 +201,27 @@ describe('dev server', () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get('content-type')).toContain('image/svg+xml');
+    expect(await response.text()).toContain('id="arrow"');
+  });
+
+  // Astro and Nuxt answer every request from a handler of their own, so the
+  // sprite has to be served ahead of it rather than from a post hook.
+  test('should serve the sprite ahead of a framework catch-all', async () => {
+    const catchAll: Plugin = {
+      name: 'catch-all',
+      apply: 'serve',
+      configureServer(server) {
+        server.middlewares.use((_req, res) => {
+          res.statusCode = 404;
+          res.end('not found');
+        });
+      },
+    };
+
+    const { url } = await startServer(createProject(), {}, [catchAll]);
+    const response = await fetch(`${url}/spritemap.svg`);
+
+    expect(response.status).toBe(200);
     expect(await response.text()).toContain('id="arrow"');
   });
 
